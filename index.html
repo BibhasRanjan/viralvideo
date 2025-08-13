@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralVideo Hub - Watch & Download Viral Videos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff4757;
+            --secondary: #5352ed;
+            --dark: #1e272e;
+            --darker: #171e25;
+            --light: #f1f2f6;
+            --gray: #a4b0be;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --card-gradient: linear-gradient(135deg, #2d3436, #1e272e);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header - Non-sticky */
+        header {
+            background: rgba(30, 39, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: relative; /* Changed from sticky to relative */
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 18px;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: var(--transition);
+            border-radius: 3px;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 20px;
+            width: 300px;
+            transition: var(--transition);
+        }
+
+        .search-container:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px var(--secondary);
+        }
+
+        .search-container input {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-size: 16px;
+            width: 100%;
+            padding: 5px 10px;
+            outline: none;
+        }
+
+        .search-container i {
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-container i:hover {
+            color: var(--secondary);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--dark);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 100;
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+        }
+
+        .mobile-nav li {
+            margin-bottom: 15px;
+        }
+
+        .mobile-nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .mobile-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .mobile-nav .search-container {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            background: linear-gradient(135deg, #171e25 0%, #2d3436 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(83, 82, 237, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--gray);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* Video Categories */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            height: 80%;
+            width: 5px;
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        .view-all {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .view-all:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .video-card {
+            background: var(--card-gradient);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .thumbnail {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .video-card:hover .thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 71, 87, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .video-card:hover .play-btn {
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--primary);
+        }
+
+        /* Video Player Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 1000px;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        .video-player {
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+        }
+
+        .video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-details {
+            padding: 20px;
+        }
+
+        .download-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(83, 82, 237, 0.2);
+            color: var(--light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            border: 1px solid rgba(83, 82, 237, 0.3);
+        }
+
+        .download-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        /* Trending Section */
+        .trending {
+            background: linear-gradient(135deg, #171e25 0%, #1e272e 100%);
+        }
+
+        /* Categories Filter */
+        .categories-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .categories-filter::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .category-btn {
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .category-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            nav ul {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .search-container {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .logo {
+                order: 1;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                order: 2;
+            }
+            
+            nav.desktop-nav {
+                display: none;
+            }
+            
+            .search-container {
+                order: 3;
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                padding: 60px 0 40px;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+            
+            .download-options {
+                flex-direction: column;
+            }
+            
+            .download-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header - Non-sticky -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-play-circle"></i>
+                ViralVideo Hub
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#">Trending</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">Channels</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </nav>
+            
+            <div class="search-container">
+                <input type="text" placeholder="Search viral videos...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Navigation -->
+    <div class="overlay" id="overlay"></div>
+    <nav class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Trending</a></li>
+            <li><a href="#">Categories</a></li>
+            <li><a href="#">Channels</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <div class="search-container">
+            <input type="text" placeholder="Search viral videos...">
+            <i class="fas fa-search"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Watch & Download Viral Videos</h1>
+            <p>Discover the most trending viral videos from around the world. Watch online or download in HD quality for free!</p>
+            
+            <div class="cta-buttons">
+                <button class="btn btn-primary">
+                    <i class="fas fa-fire"></i> Explore Trending
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i> How to Download
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Videos Section -->
+    <section class="section trending">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Trending Now</h2>
+                <a href="#" class="view-all">
+                    View All
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="categories-filter">
+                <button class="category-btn active">All</button>
+                <button class="category-btn">Funny</button>
+                <button class="category-btn">Animals</button>
+                <button class="category-btn">Music</button>
+                <button class="category-btn">Sports</button>
+                <button class="category-btn">Gaming</button>
+                <button class="category-btn">Food</button>
+                <button class="category-btn">Travel</button>
+            </div>
+            
+            <div class="videos-grid">
+                <!-- Video Card 1 -->
+                <div class="video-card" onclick="openVideo('dQw4w9WgXcQ', 'Funny Cats Compilation 2023 - Try Not To Laugh Challenge', '24M Views', '3 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Funny Cats Compilation">
+                        <div class="duration">10:25</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Funny Cats Compilation 2023 - Try Not To Laugh Challenge</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 24M Views</span>
+                            <span>3 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 2 -->
+                <div class="video-card" onclick="openVideo('jNQXAC9IVRw', 'Epic Dance Battle Goes Viral - Best Moves of 2023', '18M Views', '1 week ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/jNQXAC9IVRw/maxresdefault.jpg" alt="Epic Dance Battle">
+                        <div class="duration">8:42</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Epic Dance Battle Goes Viral - Best Moves of 2023</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 18M Views</span>
+                            <span>1 week ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 3 -->
+                <div class="video-card" onclick="openVideo('9bZkp7q19f0', 'Street Performer\'s Amazing Talent Stuns Crowd', '32M Views', '2 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg" alt="Amazing Talent">
+                        <div class="duration">5:17</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Street Performer's Amazing Talent Stuns Crowd</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 32M Views</span>
+                            <span>2 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 4 -->
+                <div class="video-card" onclick="openVideo('DLzxrzFCyOs', 'Top 10 Cooking Fails That Went Viral', '15M Views', '4 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/DLzxrzFCyOs/maxresdefault.jpg" alt="Cooking Fail">
+                        <div class="duration">3:51</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Top 10 Cooking Fails That Went Viral</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 15M Views</span>
+                            <span>4 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Videos Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Viral Videos</h2>
+                <a href="#" class="view-all">
+                    View All
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="categories-filter">
+                <button class="category-btn active">All</button>
+                <button class="category-btn">Comedy</button>
+                <button class="category-btn">Pranks</button>
+                <button class="category-btn">Challenges</button>
+                <button class="category-btn">Reactions</button>
+                <button class="category-btn">Vlogs</button>
+                <button class="category-btn">DIY</button>
+            </div>
+            
+            <div class="videos-grid">
+                <!-- Video Card 5 -->
+                <div class="video-card" onclick="openVideo('kffacxfA7G4', 'Baby\'s Infectious Laughter Brightens Everyone\'s Day', '8M Views', '1 day ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/kffacxfA7G4/maxresdefault.jpg" alt="Baby Laughing">
+                        <div class="duration">2:15</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Baby's Infectious Laughter Brightens Everyone's Day</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 8M Views</span>
+                            <span>1 day ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 6 -->
+                <div class="video-card" onclick="openVideo('d-diB65scQU', 'Genius Dog Performs Incredible Tricks', '12M Views', '3 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/d-diB65scQU/maxresdefault.jpg" alt="Dog Tricks">
+                        <div class="duration">4:32</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Genius Dog Performs Incredible Tricks</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 12M Views</span>
+                            <span>3 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 7 -->
+                <div class="video-card" onclick="openVideo('VYOjWnS4cMY', 'Impossible Basketball Shot Goes Viral', '21M Views', '5 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/VYOjWnS4cMY/maxresdefault.jpg" alt="Basketball Shot">
+                        <div class="duration">0:28</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Impossible Basketball Shot Goes Viral</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 21M Views</span>
+                            <span>5 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Card 8 -->
+                <div class="video-card" onclick="openVideo('dgha9S39Y6M', 'Street Magician\'s Mind-Blowing Trick', '16M Views', '2 days ago')">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/dgha9S39Y6M/maxresdefault.jpg" alt="Magic Trick">
+                        <div class="duration">6:04</div>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">Street Magician's Mind-Blowing Trick</h3>
+                        <div class="video-meta">
+                            <span><i class="fas fa-eye"></i> 16M Views</span>
+                            <span>2 days ago</span>
+                        </div>
+                        <div class="video-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-play"></i>
+                                Watch
+                            </div>
+                            <div class="action-btn">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Player Modal -->
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeVideo()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="video-player">
+                <iframe id="player" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="video-details">
+                <h3 id="videoTitle">Funny Cats Compilation 2023 - Try Not To Laugh Challenge</h3>
+                <div class="video-meta">
+                    <span><i class="fas fa-eye"></i> <span id="videoViews">24M Views</span></span>
+                    <span><i class="fas fa-calendar"></i> <span id="videoDate">3 days ago</span></span>
+                </div>
+                <p id="videoDescription">Watch this hilarious compilation of the funniest cat videos from around the internet. Can you make it through without laughing?</p>
+                
+                <div class="download-options">
+                    <a href="#" class="download-btn" onclick="simulateDownload('720p')">
+                        <i class="fas fa-download"></i>
+                        Download 720p
+                    </a>
+                    <a href="#" class="download-btn" onclick="simulateDownload('1080p')">
+                        <i class="fas fa-download"></i>
+                        Download 1080p
+                    </a>
+                    <a href="#" class="download-btn" onclick="simulateDownload('4K')">
+                        <i class="fas fa-download"></i>
+                        Download 4K
+                    </a>
+                    <a href="#" class="download-btn" onclick="simulateDownload('Mobile')">
+                        <i class="fas fa-mobile-alt"></i>
+                        Mobile Version
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ViralVideo Hub</h3>
+                    <p>Your ultimate destination for watching and downloading the latest viral videos from around the world.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Trending Videos</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Latest Videos</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Popular Channels</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Download App</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Funny Videos</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Animals & Pets</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Music & Dance</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Sports & Fitness</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Food & Cooking</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> How to Download</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 ViralVideo Hub. All rights reserved. This is a demo project for educational purposes.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : 'auto';
+        });
+        
+        overlay.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Video Modal Functions
+        function openVideo(videoId, title, views, date) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('player');
+            const videoTitle = document.getElementById('videoTitle');
+            const videoViews = document.getElementById('videoViews');
+            const videoDate = document.getElementById('videoDate');
+            
+            // Set video details
+            videoTitle.textContent = title;
+            videoViews.textContent = views;
+            videoDate.textContent = date;
+            
+            // Set video source
+            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('player');
+            
+            // Hide modal
+            modal.classList.remove('active');
+            
+            // Reset video source
+            player.src = '';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('videoModal');
+            if (event.target === modal) {
+                closeVideo();
+            }
+        });
+        
+        // Category Filter
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons in the same container
+                this.parentElement.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // In a real app, you would filter videos here
+                // For demo, we'll just show an alert
+                alert(`Filtering by: ${this.textContent}`);
+            });
+        });
+        
+        // Simulate download functionality
+        function simulateDownload(quality) {
+            const videoTitle = document.getElementById('videoTitle').textContent;
+            alert(`Starting download (${quality}) of: "${videoTitle}"`);
+            
+            // Find the clicked button
+            const buttons = document.querySelectorAll('.download-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(quality)) {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+                    btn.disabled = true;
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }, 2000);
+                    }, 3000);
+                }
+            });
+        }
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-container input');
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    alert(`Searching for: "${query}"`);
+                    this.value = '';
+                }
+            }
+        });
+        
+        // Add hover effect to all video cards
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.4)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+            });
+        });
+        
+        // Scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollBtn = document.getElementById('scrollToTop');
+            if (scrollBtn) {
+                scrollBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+            }
+        });
+        
+        // Create scroll to top button
+        const scrollBtn = document.createElement('button');
+        scrollBtn.id = 'scrollToTop';
+        scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        scrollBtn.style.position = 'fixed';
+        scrollBtn.style.bottom = '30px';
+        scrollBtn.style.right = '30px';
+        scrollBtn.style.width = '50px';
+        scrollBtn.style.height = '50px';
+        scrollBtn.style.borderRadius = '50%';
+        scrollBtn.style.background = 'var(--primary)';
+        scrollBtn.style.color = 'white';
+        scrollBtn.style.border = 'none';
+        scrollBtn.style.cursor = 'pointer';
+        scrollBtn.style.display = 'none';
+        scrollBtn.style.zIndex = '99';
+        scrollBtn.style.fontSize = '20px';
+        scrollBtn.style.transition = 'all 0.3s ease';
+        
+        scrollBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        scrollBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        scrollBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.body.appendChild(scrollBtn);
+    </script>
+</body>
+</html>
